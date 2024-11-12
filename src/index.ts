@@ -1,5 +1,12 @@
 import express from "express"
-import routes from '@routes/index'
+import routes from '@/routes'
+import knexConfig from "../knexfile"
+import Knex from 'knex'
+import { Model } from 'objection'
+
+const knex = Knex(knexConfig)
+
+Model.knex(knex)
 
 const app = express()
 
