@@ -1,7 +1,7 @@
 /**
  * Dependence
  */
-import 'dotenv/config';
+import config from "@/config"
 
 import * as path from 'node:path';
 import { knexSnakeCaseMappers } from 'objection';
@@ -12,14 +12,14 @@ import { knexSnakeCaseMappers } from 'objection';
 import type { Knex } from 'knex';
 
 // Update with your config settings.
-const config: Knex.Config = {
+const knexConfig: Knex.Config = {
 	client: 'mysql2',
 	connection: {
-		database: process.env.MYSQL_DATABASE,
-		user: process.env.MYSQL_USER,
-		password: process.env.MYSQL_PASSWORD,
-		host: process.env.MYSQL_HOST,
-		port: parseInt(process.env.MYSQL_PORT!),
+		database: config.db.database,
+		user: config.db.username,
+		password: config.db.password,
+		host: config.db.host,
+		port: parseInt(config.db.port!),
 	},
 	pool: {
 		min: 0,
@@ -31,4 +31,4 @@ const config: Knex.Config = {
 	...knexSnakeCaseMappers,
 };
 
-export default config;
+export default knexConfig;

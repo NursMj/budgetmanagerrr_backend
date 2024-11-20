@@ -3,6 +3,7 @@ import routes from '@/routes'
 import knexConfig from "../knexfile"
 import Knex from 'knex'
 import { Model } from 'objection'
+import config from "@/config"
 
 const knex = Knex(knexConfig)
 
@@ -14,7 +15,7 @@ app.use(express.json())
 
 app.use(routes)
 
-const PORT = process.env.PORT || 3000
+const PORT = config.port || 3000
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
