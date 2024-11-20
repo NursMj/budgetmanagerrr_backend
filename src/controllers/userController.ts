@@ -41,10 +41,10 @@ export const getUserById = async (req: Request, res: Response) => {
 			success: true,
 			data,
 		});
-	} catch (e: any) {
+	} catch (err: any) {
 		res.json({
 			success: false,
-			message: e.message || e,
+			message: err.message || err,
 		});
 	}
 };
@@ -57,15 +57,15 @@ export const createUser = async (req: Request, res: Response) => {
 			throw new Error(
 				result
 					.array()
-					.map((e) => e.msg)
+					.map((err) => err.msg)
 					.join(', ')
 			);
 
 		const { userName, displayName, password } = matchedData(req);
 
-		const isExists = await User.query().select('users.userName').where('users.userName', '=', userName);
+		const isExists = await User.query().findOne({ userName });
 
-		if (isExists.length > 0) throw new Error('Username already taken');
+		if (isExists) throw new Error('Username already taken');
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -83,10 +83,10 @@ export const createUser = async (req: Request, res: Response) => {
 				displayName: user.displayName,
 			},
 		});
-	} catch (e: any) {
+	} catch (err: any) {
 		res.json({
 			success: false,
-			message: e.message || e,
+			message: err.message || err,
 		});
 	}
 };
@@ -103,10 +103,10 @@ export const deleteUser = async (req: Request, res: Response) => {
 		res.json({
 			success: true,
 		});
-	} catch (e: any) {
+	} catch (err: any) {
 		res.json({
 			success: false,
-			message: e.message || e,
+			message: err.message || err,
 		});
 	}
 };
