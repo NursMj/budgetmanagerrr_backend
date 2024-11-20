@@ -1,16 +1,17 @@
 import { Request, Response } from 'express';
 import User from '@/models/User';
 import { matchedData, validationResult } from 'express-validator';
+import bcrypt from 'bcrypt';
 
-import type {IUser} from '@/routes/user/types'
+import type { IUser } from '@/routes/user/types';
 
 export const getAllUsers = async (_: Request, res: Response) => {
 	try {
 		const users: IUser[] = await User.query();
 
-		const data = users.map(user => {
-			return { ...user, password: undefined }
-		})
+		const data = users.map((user) => {
+			return { ...user, password: undefined };
+		});
 
 		res.send({
 			success: true,
@@ -52,8 +53,13 @@ export const createUser = async (req: Request, res: Response) => {
 	try {
 		const result = validationResult(req);
 
-		console.log('result.array() :>> ', result.array());
-		if (!result.isEmpty()) throw new Error(result.array().map(e => e.msg).join(', '));
+		if (!result.isEmpty())
+			throw new Error(
+				result
+					.array()
+					.map((e) => e.msg)
+					.join(', ')
+			);
 
 		const { userName, displayName, password } = matchedData(req);
 
@@ -61,10 +67,12 @@ export const createUser = async (req: Request, res: Response) => {
 
 		if (isExists.length > 0) throw new Error('Username already taken');
 
+		const hashedPassword = await bcrypt.hash(password, 10);
+
 		const user = await User.query().insertAndFetch({
 			userName,
 			displayName,
-			password,
+			password: hashedPassword,
 		});
 
 		res.json({
