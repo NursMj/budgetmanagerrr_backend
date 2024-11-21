@@ -12,10 +12,10 @@ import authRouter from "./auth";
 import type {RouteInfo} from "./types.ts";
 
 const defaultRoutes: RouteInfo[] = [
-    // {
-    //     path: '/auth',
-    //     route: authRouter
-    // },
+    {
+        path: '/auth',
+        route: authRouter
+    },
     {
         path: '/user',
         route: userRouter

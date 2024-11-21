@@ -1,3 +1,5 @@
+import config from '@/config';
+import jwt from "jsonwebtoken"
 import { Model } from 'objection';
 // import Operation from './Operation'
 
@@ -35,4 +37,30 @@ export default class User extends Model {
 	// 		},
 	// 	};
 	// }
+
+	getAccessToken() {
+		return jwt.sign(
+			{
+				username: 'this.username',
+				user_id: 'this.id',
+			},
+			config.jwt.access_token_secret,
+			{
+				expiresIn: config.jwt.access_token_expiration,
+			}
+		);
+	}
+
+	getRefreshToken() {
+		return jwt.sign(
+			{
+				username: 'this.username',
+				user_id: 'this.id',
+			},
+			config.jwt.refresh_token_secret,
+			{
+				expiresIn: config.jwt.refresh_token_expiration,
+			}
+		);
+	}
 }
