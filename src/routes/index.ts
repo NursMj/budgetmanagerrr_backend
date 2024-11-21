@@ -5,6 +5,8 @@ import {Router} from "express";
 
 import userRouter from './user'
 import authRouter from "./auth";
+import userCategory from "./category";
+import userOperation from "./operation";
 
 /**
  * Types
@@ -19,6 +21,14 @@ const defaultRoutes: RouteInfo[] = [
     {
         path: '/user',
         route: userRouter
+    },
+    {
+        path: '/category',
+        route: userCategory
+    },
+    {
+        path: '/operation',
+        route: userOperation
     },
 ]
 

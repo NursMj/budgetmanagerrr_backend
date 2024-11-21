@@ -2,6 +2,7 @@ import config from '@/config';
 import jwt from "jsonwebtoken"
 import { Model } from 'objection';
 import Operation from './Operation'
+import Category from './Category';
 
 export default class User extends Model {
 	id!: number;
@@ -25,18 +26,26 @@ export default class User extends Model {
 		},
 	};
 
-	// static get relationMappings() {
-	// 	return {
-	// 		operations: {
-	// 			relation: Model.HasManyRelation,
-	// 			modelClass: Operation,
-	// 			join: {
-	// 				from: 'users.id',
-	// 				to: 'operations.user_id',
-	// 			},
-	// 		},
-	// 	};
-	// }
+	static get relationMappings() {
+		return {
+			operations: {
+				relation: Model.HasManyRelation,
+				modelClass: Operation,
+				join: {
+					from: 'users.id',
+					to: 'operations.user_id',
+				},
+			},
+			categories: {
+				relation: Model.HasManyRelation,
+				modelClass: Category,
+				join: {
+					from: 'users.id',
+					to: 'categories.user_id',
+				},
+			},
+		};
+	}
 
 	getAccessToken() {
 		return jwt.sign(

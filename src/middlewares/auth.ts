@@ -25,6 +25,8 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 			throw new Error('An unexpected error has occurred');
 		}
 
+		req.user_id = user.id
+
 		next();
 	} catch (e: any) {
 		res
