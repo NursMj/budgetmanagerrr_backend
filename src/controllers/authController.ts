@@ -6,11 +6,11 @@ import { isEmpty } from '@/utils';
 
 export const login = async (req: Request, res: Response) => {
 	try {
-		const { userName, password } = req.body;
+		const { username, password } = req.body;
 
-		if (isEmpty(userName) || isEmpty(password)) throw new Error('All fields must be fill');
+		if (isEmpty(username) || isEmpty(password)) throw new Error('All fields must be fill');
 
-		const user = await User.query().findOne({ userName });
+		const user = await User.query().findOne({ username });
 
 		if (!user) throw new Error('Authentication failed');
 
@@ -52,8 +52,6 @@ export const login = async (req: Request, res: Response) => {
 
 export const logout = async (req: Request, res: Response) => {
 	try {
-		console.log('req.cookies :>> ', req.cookies);
-		console.log('req :>> ', req);
 		const { refreshToken } = req.cookies;
 		await Token.query()
 			.findOne({

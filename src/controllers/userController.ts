@@ -61,17 +61,17 @@ export const createUser = async (req: Request, res: Response) => {
 					.join(', ')
 			);
 
-		const { userName, displayName, password } = matchedData(req);
+		const { username, display_name, password } = matchedData(req);
 
-		const isExists = await User.query().findOne({ userName });
+		const isExists = await User.query().findOne({ username });
 
 		if (isExists) throw new Error('Username already taken');
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
 		const user = await User.query().insertAndFetch({
-			userName,
-			displayName,
+			username,
+			display_name,
 			password: hashedPassword,
 		});
 
@@ -79,8 +79,8 @@ export const createUser = async (req: Request, res: Response) => {
 			success: true,
 			data: {
 				id: user.id,
-				userName: user.userName,
-				displayName: user.displayName,
+				username: user.username,
+				display_name: user.display_name,
 			},
 		});
 	} catch (err: any) {
