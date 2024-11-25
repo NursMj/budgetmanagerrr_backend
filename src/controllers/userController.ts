@@ -3,11 +3,9 @@ import User from '@/models/User';
 import { matchedData, validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
 
-import type { IUser } from '@/routes/user/types';
-
 export const getAllUsers = async (_: Request, res: Response) => {
 	try {
-		const users: IUser[] = await User.query();
+		const users: User[] = await User.query();
 
 		const data = users.map((user) => {
 			return { ...user, password: undefined };
@@ -31,7 +29,7 @@ export const getUserById = async (req: Request, res: Response) => {
 		const parsedId = parseInt(req.params.id);
 		if (isNaN(parsedId)) throw new Error('Bad Request. Invalid ID');
 
-		const foundUser: IUser | undefined = await User.query().findById(parsedId);
+		const foundUser: User | undefined = await User.query().findById(parsedId);
 
 		if (!foundUser) throw new Error('User not found');
 
