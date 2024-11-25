@@ -8,8 +8,9 @@ export default class Operation extends Model {
 	category_id!: number;
 	operation_type!: string;
 	sum!: number;
-	created_at!: { type: 'string'; format: 'date-time' };
-	updated_at!: { type: 'string'; format: 'date-time' };
+	date!: Date;
+	created_at!: Date;
+	updated_at!: Date;
 
 	descroption?: string;
 
