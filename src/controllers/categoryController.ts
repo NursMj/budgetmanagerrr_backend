@@ -53,12 +53,11 @@ export const createCategory = async (req: Request, res: Response) => {
 			);
 
 		const { name } = matchedData(req);
+		const { user_id } = req;
 
-		const isExists = await Category.query().findOne({ name });
+		const isExists = await Category.query().findOne({ name, user_id });
 
 		if (isExists) throw new Error('Category already exists');
-
-		const user_id = req.user_id;
 
 		const category = await Category.query().insertAndFetch({
 			user_id,
