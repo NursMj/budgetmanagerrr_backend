@@ -8,12 +8,12 @@ const router = Router();
 
 router.get('/', auth, getAllCategories);
 
-router.get('/:id', getCategoryById);
+router.get('/:id', auth, getCategoryById);
 
 router.post('/', auth, checkSchema(createCategoryValidationSchema), createCategory);
 
 router.patch('/:id', auth, checkSchema(createCategoryValidationSchema), updateCategory);
 
-router.delete('/:id', deleteCategory);
+router.delete('/:id', auth, deleteCategory);
 
 export default router;
