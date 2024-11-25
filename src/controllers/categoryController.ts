@@ -20,10 +20,10 @@ export const getAllCategories = async (req: Request, res: Response) => {
 			success: true,
 			data: categories,
 		});
-	} catch (err) {
+	} catch (err: any) {
 		res.json({
 			success: false,
-			message: err,
+			message: err.message || err,
 		});
 	}
 };

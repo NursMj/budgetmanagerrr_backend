@@ -28,10 +28,10 @@ export const getAllOperations = async (req: Request, res: Response) => {
 			success: true,
 			data: operations,
 		});
-	} catch (err) {
+	} catch (err: any) {
 		res.json({
 			success: false,
-			message: err,
+			message: err.message || err,
 		});
 	}
 };

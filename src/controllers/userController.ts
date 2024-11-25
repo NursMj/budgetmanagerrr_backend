@@ -15,11 +15,10 @@ export const getAllUsers = async (_: Request, res: Response) => {
 			success: true,
 			data,
 		});
-	} catch (err) {
-		console.log('err :>> ', err);
+	} catch (err: any) {
 		res.json({
 			success: false,
-			message: err,
+			message: err.message || err,
 		});
 	}
 };
