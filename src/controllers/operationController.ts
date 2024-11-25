@@ -5,7 +5,19 @@ import { matchedData, validationResult } from 'express-validator';
 export const getAllOperations = async (req: Request, res: Response) => {
 	try {
 		const { user_id } = req;
-		const operations: Operation[] = await Operation.query().where('user_id', user_id!);
+		const { operation_type, category_id } = req.query;
+		
+		let query = Operation.query().where('user_id', user_id!);
+
+		if (operation_type) {
+			query = query.where('operation_type', operation_type as string);
+		}
+
+		if (category_id) {
+			query = query.where('category_id', category_id as string);
+		}
+
+		const operations: Operation[] = await query;
 
 		res.send({
 			success: true,
