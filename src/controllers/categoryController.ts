@@ -5,7 +5,16 @@ import { matchedData, validationResult } from 'express-validator';
 export const getAllCategories = async (req: Request, res: Response) => {
 	try {
 		const { user_id } = req;
-		const categories: Category[] = await Category.query().where('user_id', user_id!);
+		const { page, limit } = req.query;
+
+		let query = Category.query().where('user_id', user_id!);
+		
+		if (page && limit) {
+			const offset = (Number(page) - 1) * Number(limit);
+			query = query.offset(offset).limit(Number(limit));
+		}
+
+		const categories: Category[] = await query;
 
 		res.send({
 			success: true,
