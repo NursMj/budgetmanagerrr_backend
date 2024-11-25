@@ -7,6 +7,7 @@ import userRouter from './user'
 import authRouter from "./auth";
 import userCategory from "./category";
 import userOperation from "./operation";
+import userBalance from "./balance";
 
 /**
  * Types
@@ -29,6 +30,10 @@ const defaultRoutes: RouteInfo[] = [
     {
         path: '/operation',
         route: userOperation
+    },
+    {
+        path: '/balance',
+        route: userBalance
     },
 ]
 
