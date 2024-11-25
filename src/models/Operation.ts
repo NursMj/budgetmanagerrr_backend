@@ -9,10 +9,10 @@ export default class Operation extends Model {
 	operation_type!: string;
 	sum!: number;
 	date!: Date;
-	created_at!: Date;
-	updated_at!: Date;
+	created_at?: Date;
+	updated_at?: Date;
 
-	descroption?: string;
+	description!: string;
 
 	// Table name is the only required property.
 	static get tableName() {

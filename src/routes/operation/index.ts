@@ -1,17 +1,19 @@
 import { Router } from 'express';
-import { getAllOperations } from "@/controllers/operationController"
+import { getAllOperations, getOperationById, createOperation, updateOperation, deleteOperation } from "@/controllers/operationController"
 import { checkSchema } from 'express-validator';
-import { createUserValidationSchema } from '@/validations/userValidationSchemas';
+import { createOperationValidationSchema, updateOperationValidationSchema } from '@/validations/operationValidationSchemas';
 import { auth } from '@/middlewares/auth'
 
 const router = Router();
 
 router.get('/', auth, getAllOperations);
 
-// router.get('/:id', getUserById);
+router.get('/:id', auth, getOperationById);
 
-// router.post('/', checkSchema(createUserValidationSchema), createUser);
+router.post('/', auth, checkSchema(createOperationValidationSchema), createOperation);
 
-// router.delete('/:id', deleteUser);
+router.patch('/:id', auth, checkSchema(updateOperationValidationSchema), updateOperation);
+
+router.delete('/:id', auth, deleteOperation);
 
 export default router;
