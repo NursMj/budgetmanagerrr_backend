@@ -1,0 +1,36 @@
+services:
+  budgetmanagerrr-server-app:
+    image: budgetmanagerrr-server-app
+    build: .
+    depends_on:
+      budgetmanagerrr-db: 
+        condition: service_healthy
+    restart: always
+    env_file:
+      - .env
+    environment:
+      TZ: Africa/Accra
+    ports:
+      - "32512:${PORT}"
+
+  budgetmanagerrr-db:
+    container_name: budgetmanagerrr-db
+    image: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env.docker
+    environment:
+      TZ: Africa/Accra
+    healthcheck:
+      test: ['CMD-SHELL', "mysqladmin ping -u root -p$$MYSQL_ROOT_PASSWORD | grep 'mysqld is alive' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - budgetmanagerrr-mysql-data:/var/lib/mysql
+
+volumes:
+  budgetmanagerrr-mysql-data:
+    # driver: local
