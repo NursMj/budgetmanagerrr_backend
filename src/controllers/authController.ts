@@ -149,7 +149,6 @@ export const refresh = async (req: Request, res: Response) => {
 			id: user_token.user_id,
 		});
 
-		user_token.verifyAccessToken();
 		user_token.verifyRefreshToken();
 
 		if (!user) throw new Error('An unexpected error has occurred');
@@ -163,13 +162,17 @@ export const refresh = async (req: Request, res: Response) => {
 			refresh_token: new_refresh_token,
 			ua: newUA,
 		});
+		
+		res.cookie('refreshToken', new_refresh_token, {
+			maxAge: 30 * 24 * 60 * 60 * 1000,
+			httpOnly: true,
+		});
 
 		res.json({
 			success: true,
 			data: {
 				id: user.id,
 				access_token: new_access_token,
-				refresh_token: new_refresh_token,
 			},
 		});
 	} catch (e: any) {
