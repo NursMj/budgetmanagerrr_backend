@@ -16,7 +16,7 @@ export const getAllUsers = async (_: Request, res: Response) => {
 			data,
 		});
 	} catch (err: any) {
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: err.message || err,
 		});
@@ -26,11 +26,23 @@ export const getAllUsers = async (_: Request, res: Response) => {
 export const getUserById = async (req: Request, res: Response) => {
 	try {
 		const parsedId = parseInt(req.params.id);
-		if (isNaN(parsedId)) throw new Error('Bad Request. Invalid ID');
+		if (isNaN(parsedId)) {
+			res.status(400).json({
+				success: true,
+				message: 'Bad Request. Invalid ID',
+			});
+			return;
+		}
 
 		const foundUser: User | undefined = await User.query().findById(parsedId);
 
-		if (!foundUser) throw new Error('User not found');
+		if (!foundUser) {
+			res.status(404).json({
+				success: true,
+				message: 'User not found',
+			});
+			return;
+		}
 
 		const data = { ...foundUser, password: undefined };
 
@@ -39,7 +51,7 @@ export const getUserById = async (req: Request, res: Response) => {
 			data,
 		});
 	} catch (err: any) {
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: err.message || err,
 		});
@@ -50,25 +62,34 @@ export const createUser = async (req: Request, res: Response) => {
 	try {
 		const result = validationResult(req);
 
-		if (!result.isEmpty())
-			throw new Error(
-				result
+		if (!result.isEmpty()) {
+			res.status(400).json({
+				success: false,
+				message: result
 					.array()
 					.map((err) => err.msg)
-					.join(', ')
-			);
+					.join(', '),
+			});
+			return;
+		}
 
-		const { username, display_name, password } = matchedData(req);
+		const { email, name, password } = matchedData(req);
 
-		const isExists = await User.query().findOne({ username });
+		const isExists = await User.query().findOne({ email });
 
-		if (isExists) throw new Error('Username already taken');
+		if (isExists) {
+			res.status(409).json({
+				success: false,
+				message: 'User with email nurs@gmail.com already exists',
+			});
+			return;
+		}
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
 		const user = await User.query().insertAndFetch({
-			username,
-			display_name,
+			email,
+			name,
 			password: hashedPassword,
 		});
 
@@ -76,12 +97,12 @@ export const createUser = async (req: Request, res: Response) => {
 			success: true,
 			data: {
 				id: user.id,
-				username: user.username,
-				display_name: user.display_name,
+				email: user.email,
+				name: user.name,
 			},
 		});
 	} catch (err: any) {
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: err.message || err,
 		});
@@ -91,17 +112,23 @@ export const createUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
 	try {
 		const parsedId = parseInt(req.params.id);
-		if (isNaN(parsedId)) throw new Error('Bad Request. Invalid ID');
+		if (isNaN(parsedId)) {
+			res.status(400).json({
+				success: true,
+				message: 'Bad Request. Invalid ID',
+			});
+			return;
+		}
 
 		const resultDelete = await User.query().deleteById(parsedId);
 
-		if (!resultDelete) throw new Error('An unexpected error has occurred');
+		if (!resultDelete) throw new Error('Failed to delete user');
 
 		res.json({
 			success: true,
 		});
 	} catch (err: any) {
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: err.message || err,
 		});

@@ -1,13 +1,14 @@
 import config from '@/config';
 import jwt from "jsonwebtoken"
+import type { SignOptions } from "jsonwebtoken"
 import { Model } from 'objection';
 import Operation from './Operation'
 import Category from './Category';
 
 export default class User extends Model {
 	id!: number;
-	username!: string;
-	display_name!: string;
+	email!: string;
+	name!: string;
 	password!: string;
 
 	static get tableName() {
@@ -16,12 +17,12 @@ export default class User extends Model {
 
 	static jsonSchema = {
 		type: 'object',
-		required: ['username', 'display_name', 'password'],
+		required: ['email', 'name', 'password'],
 
 		properties: {
 			id: { type: 'integer' },
-			username: { type: 'string', minLength: 1, maxLength: 255 },
-			display_name: { type: 'string', minLength: 1, maxLength: 255 },
+			email: { type: 'string', minLength: 1, maxLength: 255 },
+			name: { type: 'string', minLength: 1, maxLength: 255 },
 			password: { type: 'string', minLength: 1, maxLength: 255 },
 		},
 	};
@@ -50,12 +51,12 @@ export default class User extends Model {
 	getAccessToken() {
 		return jwt.sign(
 			{
-				username: 'this.username',
+				email: 'this.email',
 				user_id: 'this.id',
 			},
 			config.jwt.access_token_secret,
 			{
-				expiresIn: config.jwt.access_token_expiration,
+				expiresIn: config.jwt.access_token_expiration as SignOptions["expiresIn"],
 			}
 		);
 	}
@@ -63,12 +64,12 @@ export default class User extends Model {
 	getRefreshToken() {
 		return jwt.sign(
 			{
-				username: 'this.username',
+				email: 'this.email',
 				user_id: 'this.id',
 			},
 			config.jwt.refresh_token_secret,
 			{
-				expiresIn: config.jwt.refresh_token_expiration,
+				expiresIn: config.jwt.refresh_token_expiration as SignOptions["expiresIn"],
 			}
 		);
 	}

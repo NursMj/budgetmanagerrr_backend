@@ -1,22 +1,54 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 import User from '@/models/User';
 import Token from '@/models/Token';
 import { isEmpty } from '@/utils';
+import { matchedData, validationResult } from 'express-validator';
 
 export const login = async (req: Request, res: Response) => {
 	try {
-		const { username, password } = req.body;
+		const result = validationResult(req);
 
-		if (isEmpty(username) || isEmpty(password)) throw new Error('All fields must be fill');
+		if (!result.isEmpty()) {
+			res.status(400).json({
+				success: false,
+				message: result
+					.array()
+					.map((err) => err.msg)
+					.join(', '),
+			});
+			return;
+		}
 
-		const user = await User.query().findOne({ username });
+		const { email, password } = matchedData(req);
 
-		if (!user) throw new Error('Authentication failed');
+		if (isEmpty(email) || isEmpty(password)) {
+			res.status(400).json({
+				success: false,
+				message: 'All fields must be fill',
+			});
+			return;
+		}
+
+		const user = await User.query().findOne({ email });
+
+		if (!user) {
+			res.status(400).json({
+				success: false,
+				message: 'Incorrect email or password',
+			});
+			return;
+		}
 
 		const passwordMatch = await bcrypt.compare(password, user.password);
 
-		if (!passwordMatch) throw new Error('Authentication failed');
+		if (!passwordMatch) {
+			res.status(400).json({
+				success: false,
+				message: 'Incorrect email or password',
+			});
+			return;
+		}
 
 		const access_token = user.getAccessToken();
 		const refresh_token = user.getRefreshToken();
@@ -39,11 +71,10 @@ export const login = async (req: Request, res: Response) => {
 			data: {
 				id: user.id,
 				access_token,
-				refresh_token,
 			},
 		});
 	} catch (e: any) {
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: e.message || e,
 		});
@@ -63,7 +94,7 @@ export const logout = async (req: Request, res: Response) => {
 			success: true,
 		});
 	} catch (e: any) {
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: e.message || e,
 		});
@@ -95,7 +126,7 @@ export const isAuth = async (req: Request, res: Response) => {
 			success: true,
 		});
 	} catch (e: any) {
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: e.message || e,
 		});
@@ -142,7 +173,7 @@ export const refresh = async (req: Request, res: Response) => {
 			},
 		});
 	} catch (e: any) {
-		res.json({
+		res.status(500).json({
 			success: false,
 			message: e.message || e,
 		});

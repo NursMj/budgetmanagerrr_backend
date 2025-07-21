@@ -3,9 +3,6 @@
  */
 import config from "./src/config"
 
-import * as path from 'node:path';
-import { knexSnakeCaseMappers } from 'objection';
-
 /**
  * Types
  */
@@ -25,10 +22,6 @@ const knexConfig: Knex.Config = {
 		min: 0,
 		max: 10,
 	},
-	migrations: {
-		directory: path.join('./src/migrations'),
-	},
-	...knexSnakeCaseMappers,
 };
 
 export default knexConfig;

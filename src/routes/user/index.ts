@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllUsers, getUserById, createUser, deleteUser } from "@/controllers/userController"
+import { getAllUsers, getUserById, createUser, deleteUser } from '@/controllers/userController';
 import { checkSchema } from 'express-validator';
 import { createUserValidationSchema } from '@/validations/userValidationSchemas';
 
