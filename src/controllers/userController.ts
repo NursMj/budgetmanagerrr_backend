@@ -80,7 +80,7 @@ export const createUser = async (req: Request, res: Response) => {
 		if (isExists) {
 			res.status(409).json({
 				success: false,
-				message: 'User with email nurs@gmail.com already exists',
+				message: `User with email ${email} already exists`,
 			});
 			return;
 		}
