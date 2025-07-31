@@ -5,6 +5,7 @@ import Knex from 'knex'
 import { Model } from 'objection'
 import config from "@/config"
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
 const knex = Knex(knexConfig)
 
@@ -12,6 +13,7 @@ Model.knex(knex)
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 
 app.use(cookieParser())
