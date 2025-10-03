@@ -69,7 +69,11 @@ export const login = async (req: Request, res: Response) => {
 		res.json({
 			success: true,
 			data: {
-				id: user.id,
+				user: {
+					id: user.id,
+					email: user.email,
+					name: user.name,
+				},
 				access_token,
 			},
 		});
@@ -171,7 +175,11 @@ export const refresh = async (req: Request, res: Response) => {
 		res.json({
 			success: true,
 			data: {
-				id: user.id,
+				user: {
+					id: user.id,
+					email: user.email,
+					name: user.name,
+				},
 				access_token: new_access_token,
 			},
 		});
