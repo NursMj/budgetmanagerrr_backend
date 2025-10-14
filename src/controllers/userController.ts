@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import User from '@/models/User';
 import { matchedData, validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
+import handleUserLogin from './helpers/handleUserLogin';
 
 export const getAllUsers = async (_: Request, res: Response) => {
 	try {
@@ -93,13 +94,12 @@ export const createUser = async (req: Request, res: Response) => {
 			password: hashedPassword,
 		});
 
+		// Auto-login after successful user creation
+		const loginData = await handleUserLogin(user, res);
+
 		res.json({
 			success: true,
-			data: {
-				id: user.id,
-				email: user.email,
-				name: user.name,
-			},
+			data: loginData,
 		});
 	} catch (err: any) {
 		res.status(500).json({
