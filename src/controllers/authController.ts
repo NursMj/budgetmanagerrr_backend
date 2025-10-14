@@ -4,6 +4,7 @@ import User from '@/models/User';
 import Token from '@/models/Token';
 import { isEmpty } from '@/utils';
 import { matchedData, validationResult } from 'express-validator';
+import handleUserLogin from './helpers/handleUserLogin';
 
 export const login = async (req: Request, res: Response) => {
 	try {
@@ -50,32 +51,11 @@ export const login = async (req: Request, res: Response) => {
 			return;
 		}
 
-		const access_token = user.getAccessToken();
-		const refresh_token = user.getRefreshToken();
-
-		const user_token = await Token.query().insert({
-			user_id: user.id,
-			access_token,
-			refresh_token,
-		});
-
-		if (!user_token) throw new Error('An unexpected error has occurred');
-
-		res.cookie('refreshToken', refresh_token, {
-			maxAge: 30 * 24 * 60 * 60 * 1000,
-			httpOnly: true,
-		});
+		const loginData = await handleUserLogin(user, res);
 
 		res.json({
 			success: true,
-			data: {
-				user: {
-					id: user.id,
-					email: user.email,
-					name: user.name,
-				},
-				access_token,
-			},
+			data: loginData,
 		});
 	} catch (e: any) {
 		res.status(500).json({
@@ -105,7 +85,7 @@ export const logout = async (req: Request, res: Response) => {
 	}
 };
 
-export const isAuth = async (req: Request, res: Response) => {
+export const me = async (req: Request, res: Response) => {
 	try {
 		const bearerHeader = req.headers['authorization'];
 
@@ -128,6 +108,13 @@ export const isAuth = async (req: Request, res: Response) => {
 
 		res.json({
 			success: true,
+			data: {
+				user: {
+					id: user.id,
+					email: user.email,
+					name: user.name,
+				},
+			},
 		});
 	} catch (e: any) {
 		res.status(500).json({
@@ -166,7 +153,7 @@ export const refresh = async (req: Request, res: Response) => {
 			refresh_token: new_refresh_token,
 			ua: newUA,
 		});
-		
+
 		res.cookie('refreshToken', new_refresh_token, {
 			maxAge: 30 * 24 * 60 * 60 * 1000,
 			httpOnly: true,
