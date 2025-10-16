@@ -26,9 +26,10 @@ export default async function startServer() {
 	app.use(cookieParser());
 	app.use(routes);
 
-	const PORT = config.port || 3000;
+	const PORT = config.port ? +config.port : 3000;
+	const HOST = config.host || 'localhost';
 
-	app.listen(PORT, () => {
+	app.listen(PORT, HOST, () => {
 		console.log(`Server is running on port ${PORT}`);
 	});
 }

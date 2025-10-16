@@ -3,6 +3,7 @@ dotenv.config();
 
 export default {
 	port: process.env.PORT,
+	host: process.env.HOST,
 	clientUrl: process.env.CLIENT_URL,
 	db: {
 		database: process.env.MYSQL_DATABASE,
