@@ -1,31 +1,17 @@
-import express from "express"
-import routes from '@/routes'
-import knexConfig from "../knexfile"
-import Knex from 'knex'
-import { Model } from 'objection'
-import config from "@/config"
-import cookieParser from 'cookie-parser'
-import cors from 'cors'
+import startServer from './services/server';
 
-const knex = Knex(knexConfig)
+// Handle uncaught exceptions and unhandled rejections
+process.on('uncaughtException', (error) => {
+	console.error('Uncaught Exception:', error);
+	process.exit(1);
+});
 
-Model.knex(knex)
+process.on('unhandledRejection', (reason, promise) => {
+	console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+	process.exit(1);
+});
 
-const app = express()
-
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
-
-app.use(express.json())
-
-app.use(cookieParser())
-
-app.use(routes)
-
-const PORT = config.port || 3000
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-})
+startServer().catch((error) => {
+	console.error('Failed to start server:', error);
+	process.exit(1);
+});
